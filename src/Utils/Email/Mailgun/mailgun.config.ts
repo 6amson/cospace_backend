@@ -7,7 +7,7 @@ config();
 
 const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
-const MAILGUN_USERNAME = 'api';
+const MAILGUN_USERNAME = process.env.MAILGUN_USERNAME;
 
 export class MailGun {
     private mg;

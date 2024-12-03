@@ -3,6 +3,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { config } from 'dotenv';
 import { User, UserActivityLog, UserActivityLogSchema, UserMatch, UserMatchSchema, UserSchema } from './Schema/user.schema';
+import { UserModule } from './User/user.module';
+import { UserService } from './user/user.service';
+import { UserController } from './User/user.controller';
 
 config();
 
@@ -20,9 +23,9 @@ const databaseUrl = process.env.DATABASE_URL;
       { name: UserMatch.name, schema: UserMatchSchema },
       // { name: User.name, schema: UserSchema },
     ]),
-
+    UserModule
   ],
-  controllers: [],
-  providers: [],
+  controllers: [UserController],
+  providers: [UserService],
 })
 export class AppModule {}

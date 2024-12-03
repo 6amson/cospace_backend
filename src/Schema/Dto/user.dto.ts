@@ -29,12 +29,6 @@ export class UserSigninDto {
 
     @IsNotEmpty({ message: 'Password is required' })
     readonly password: string;
-
-    @IsNotEmpty({ message: 'First name is required' })
-    readonly firstName: string;
-
-    @IsNotEmpty({ message: 'Last name is required' })
-    readonly lastName: string;
 }
 
 export class verifyCodeDto {
@@ -47,7 +41,15 @@ export class verifyCodeDto {
     verificationCode: string;
 }
 
-export class resetPasswordDto {
+export class changePasswordDto {
+    @IsEmail({}, { message: 'Email format invalid' })
+    @IsNotEmpty()
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    verificationCode: string;
+
     @IsEmail()
     @IsNotEmpty()
     oldPassword: string;

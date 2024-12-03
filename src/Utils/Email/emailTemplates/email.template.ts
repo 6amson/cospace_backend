@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { EmailTypeKey } from 'src/Schema/user.schema';
+import { EmailTypeKey } from 'src/Utils/Types/statics';
 import { getEmailHeader, getEmailLayout } from '../emailTemplates/emailLayouts/emailLayouts/email.layout'
 
 export type EmailTemplate = {
@@ -14,7 +14,7 @@ export const getEmailTemplate = (
 ): EmailTemplate => {
     switch (key) {
         case EmailTypeKey.verifyEmail:
-            const verifyEmailHeader = getEmailHeader(params.firstName);
+            const verifyEmailHeader = getEmailHeader(params.name);
             const verifyEmailBody = `
           <div class="credentials">
             <p>You're almost there! Please verify your email address.</p>
@@ -35,7 +35,7 @@ export const getEmailTemplate = (
             };
 
         case EmailTypeKey.resendEmailVerificationCode:
-            const resendVerificationCodeHeader = getEmailHeader(params.firstName);
+            const resendVerificationCodeHeader = getEmailHeader(params.name);
             const resendVerificationCodeBody = `
           <div class="credentials">
             <p>Please, verify your email address.</p>
@@ -56,13 +56,14 @@ export const getEmailTemplate = (
             };
 
         case EmailTypeKey.passwordReset:
-            const resetHeader = getEmailHeader(params.firstName);
+            const resetHeader = getEmailHeader(params.name);
             const resetDetailBody = `
                   <div class="credentials">
-                    <p> Click the following link to reset your password:</p>
+                    <p> Copy the verification code below and click the link to reset your password:</p>
+                    <p><strong>Verification Code<strong/></p>
+                    <p>${params.verificationCode}</p>
                     <p><a href="${params.resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #5D3FD3; color: #ffffff; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
                     <p>If you did not request a password reset, please ignore this email.</p>
-                    <p>Best regards,<br> PhlexIT App</p>
                   </div>
                 `;
             const resetHtml = getEmailLayout(
@@ -78,7 +79,7 @@ export const getEmailTemplate = (
             };
 
         case EmailTypeKey.listingSuccess:
-            const listingSuccessHeader = getEmailHeader(params.firstName);
+            const listingSuccessHeader = getEmailHeader(params.name);
             const listingSuccessDetailBody = `
                       <div class="credentials">
                         
@@ -97,7 +98,7 @@ export const getEmailTemplate = (
             };
 
         case EmailTypeKey.listingDelisted:
-            const listingDelistedHeader = getEmailHeader(params.firstName);
+            const listingDelistedHeader = getEmailHeader(params.name);
             const listingDelistedDetailBody = `
                           <div class="credentials">
                             
