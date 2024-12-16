@@ -236,4 +236,5 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 export const UserMatchSchema = SchemaFactory.createForClass(UserMatch);
 export const UserComplaintSchema = SchemaFactory.createForClass(UserComplaint);
+export const UserReviewSchema = SchemaFactory.createForClass(UserReview);
 export const UserActivityLogSchema = SchemaFactory.createForClass(UserActivityLog);

@@ -11,14 +11,15 @@ import {
     Min,
     isNotEmpty,
     IsNumber,
+    Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { HydratedDocument, Document, Types } from 'mongoose';
-import { Accessibility, Amenities, ApartmentType, Currency, Gender, HouseRooms, HouseRules, locationAccessibility, NearbyPlaces, Religion, RentType, Safety } from 'src/Utils/Types/statics';
+import { Accessibility, Amenities, ApartmentType, Currency, Gender, HouseRooms, HouseRules, locationAccessibility, MeansOfTransportToMAjorRoad, NearbyPlaces, Religion, RentType, Safety } from 'src/Utils/Types/statics';
 import { Optional } from '@nestjs/common';
 
 export type ApartmentListingDocument = ApartmentListing & Document;
-export type RoomateListingDocument = RoomateListing & Document;
+export type SelfListingDocument = SelfListing & Document;
 
 
 @Schema({ timestamps: true })
@@ -27,21 +28,38 @@ export class ApartmentListing {
     @IsNotEmpty()
     userId: string;
 
+    @Prop({ required: false })
+    @IsNotEmpty()
+    @IsOptional()
+    about?: string;
+
     @Prop({ required: true })
     @IsNotEmpty()
     rentPrice: number;
 
     @Prop({ required: true })
     @IsNotEmpty()
+    @IsString()
+    @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
+      message: 'Date must be in the format YYYY-MM',
+    })
+    rentStartDate: string; 
+  
+    @Prop({ required: true })
+    @IsNotEmpty()
+    @IsString()
+    @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
+      message: 'Date must be in the format YYYY-MM',
+    })
+    rentEndDate: string;
+
+    @Prop({ required: true })
+    @IsNotEmpty()
+    minimumRenterAge: number;
+
+    @Prop({ required: true })
+    @IsNotEmpty()
     currency: Currency;
-
-    @Prop({ required: true })
-    @IsNotEmpty()
-    rentStartDate: Date;
-
-    @Prop({ required: true })
-    @IsNotEmpty()
-    rentEndDate: Date;
 
     @Prop({ required: true, enum: ["Prepaid", "Postpaid",] })
     @IsNotEmpty()
@@ -109,17 +127,17 @@ export class ApartmentListing {
     @IsOptional()
     isRentNegotiable?: boolean;
 
-    @Prop({ required: false, type: String })
+    @Prop({ required: true, type: String })
     @IsOptional()
-    walkingTimeFromMajorRoad?: string; //20mins, 1hr, 5s
+    timeFromMajorRoadOrPark: string; //20mins, 1hr, 5s
 
-    @Prop({ required: false, type: Boolean })
+    @Prop({ required: true, type: MeansOfTransportToMAjorRoad })
     @IsOptional()
-    landlordResidesWithin?: boolean;
+    meansFromMajorRoadOrPark: MeansOfTransportToMAjorRoad; //20mins, 1hr, 5s
 
-    @Prop({ required: false, type: Boolean })
+    @Prop({ required: true, type: Boolean })
     @IsOptional()
-    wouldShareSpaceWithShortRenter?: boolean; //short-rent
+    landlordResidesWithin: boolean;
 
     @Prop({ required: false, type: String })
     @IsOptional()
@@ -138,11 +156,16 @@ export class ApartmentListing {
     @Max(10, { message: "Safety consistency range cannot be more than 10" })
     @Min(0, { message: "Safety consistency range cannot be less than 0" })
     safetyConsistency: number; //how safe is the environment
+
+    @Prop({ required: false, type: Number })
+    @Max(10, { message: "Water availability range cannot be more than 10" })
+    @Min(0, { message: "Water availability range cannot be less than 0" })
+    waterAvailabilityConsitency: number;
 }
 
 
 
-export class RoomateListing {
+export class SelfListing {
     @Prop({ required: true })
     @IsNotEmpty()
     userId: string;
@@ -238,5 +261,5 @@ export class RoomateListing {
 
 
 export const ApartmentListingSchema = SchemaFactory.createForClass(ApartmentListing);
-export const RoomateListingSchema = SchemaFactory.createForClass(RoomateListing);
+export const SelfListingSchema = SchemaFactory.createForClass(SelfListing);
 

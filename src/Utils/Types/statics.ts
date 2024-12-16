@@ -62,12 +62,6 @@ export enum Sexuality {
 export enum Religion {
     CHRISTIANITY = "Christianity",
     ISLAM = "Islam",
-    HINDUISM = "Hinduism",
-    BUDDHISM = "Buddhism",
-    JUDAISM = "Judaism",
-    SIKHISM = "Sikhism",
-    JAINISM = "Jainism",
-    OTHER = "Other",
     NON_RELIGIOUS = 'Non religious'
 }
 
@@ -140,6 +134,12 @@ export enum Safety {
     SMOKE_DETECTOR = 'Smoke detector',
     FIRE_EXTINGUISHER = 'Fire extinguisher',
     FENCE = 'Fenced and gated'
+}
+
+export enum MeansOfTransportToMAjorRoad {
+    BIKE = "Bike",
+    CAR = 'Car',
+    TREKKING = 'Trekking',
 }
 
 export enum HouseRules {
