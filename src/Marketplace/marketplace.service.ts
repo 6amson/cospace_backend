@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Inject, forwardRef } from '@nestjs/common';
 import { httpErrorException } from 'src/app.exception';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -27,11 +27,11 @@ export class MarketplaceService {
     private Mailgun: MailGun;
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
-        @InjectModel('UserActivityLog') private readonly userActivityLogModel: Model<UserActivityLog>,
-        @InjectModel('UserReview') private readonly userReview: Model<UserReview>,
-        @InjectModel('UserComplaint') private readonly userComplaint: Model<UserComplaint>,
+        @InjectModel(UserActivityLog.name) private readonly userActivityLogModel: Model<UserActivityLog>, // Use .name
+        @InjectModel(UserReview.name) private readonly userReview: Model<UserReview>, // Use .name
+        @InjectModel(UserComplaint.name) private readonly userComplaint: Model<UserComplaint>,
         private configService: ConfigService,
-        private userService: UserService,
+        @Inject(forwardRef(() => UserService)) private readonly userService: UserService,
     ) {
         this.oauth2Client = new OAuth2Client({
             clientId: this.configService.get<string>('GOOGLE_CLIENT_ID'),

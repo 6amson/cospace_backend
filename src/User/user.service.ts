@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, forwardRef, Inject } from '@nestjs/common';
 import { httpErrorException } from 'src/app.exception';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -12,6 +12,7 @@ import { changePasswordDto, UserSigninDto, verifyCodeDto } from 'src/Schema/Dto/
 import * as jwt from 'jsonwebtoken';
 import { MailGun } from 'src/Utils/Email/Mailgun/mailgun.config';
 import { EmailTypeKey, UserActivityType, UserRegistrationStage, VerificationReason } from 'src/Utils/Types/statics';
+import { MarketplaceService } from 'src/Marketplace/marketplace.service';
 
 
 config();
@@ -26,8 +27,10 @@ export class UserService {
     private Mailgun: MailGun;
     constructor(
         @InjectModel(User.name) private userModel: Model<User>,
-        @InjectModel('UserActivityLog') private readonly userActivityLogModel: Model<UserActivityLog>,
+        @InjectModel(UserActivityLog.name) private readonly userActivityLogModel: Model<UserActivityLog>,
         private configService: ConfigService,
+        @Inject(forwardRef(() => MarketplaceService))
+        private MarketplaceService: MarketplaceService
     ) {
         this.oauth2Client = new OAuth2Client({
             clientId: this.configService.get<string>('GOOGLE_CLIENT_ID'),
@@ -264,7 +267,7 @@ export class UserService {
 
     public async verifyEmailVerificationCode(verifyCodeData: verifyCodeDto): Promise<any> {
         const email = verifyCodeData.email;
-        const user = await this.authenticatedUser({email});
+        const user = await this.authenticatedUser({ email });
         if (!user) {
             throw new HttpException('This user does not exist.', HttpStatus.NOT_FOUND);
         }
@@ -287,7 +290,7 @@ export class UserService {
     }
 
     async signin(user: UserSigninDto): Promise<{}> {
-        const foundUser = await this.authenticatedUser({email: user.email})
+        const foundUser = await this.authenticatedUser({ email: user.email })
 
         if (!foundUser) {
             throw new HttpException(
@@ -346,7 +349,7 @@ export class UserService {
         changePasswordDto: changePasswordDto,
     ): Promise<any> {
         const { email, verificationCode, oldPassword, newPassword } = changePasswordDto
-        const user = await this.authenticatedUser({email});
+        const user = await this.authenticatedUser({ email });
         await this.isUserActive(user._id.toString());
         if (user.verificationDetails.reason != VerificationReason.PASSSWORD_RESET) {
             throw new HttpException('This is on us, please retry the process.', HttpStatus.NOT_FOUND);

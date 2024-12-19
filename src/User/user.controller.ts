@@ -1,4 +1,4 @@
-import { JwtAuthGuard } from 'src/Utils/Guard/user.guard';
+import { JwtAuthGuard } from 'src/Utils/Guard/user.guard.service';
 import { RequestWithUser } from 'src/Utils/Types/types';
 import {
     Controller,

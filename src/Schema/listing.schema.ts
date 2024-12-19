@@ -1,265 +1,407 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {
-    IsEmail,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsArray,
-    ValidateNested,
-    IsEnum,
-    Max,
-    Min,
-    isNotEmpty,
-    IsNumber,
-    Matches,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsEnum, IsBoolean, ValidateNested, IsDate, Max, Min, Matches } from 'class-validator';
 import { Type } from 'class-transformer';
-import { HydratedDocument, Document, Types } from 'mongoose';
-import { Accessibility, Amenities, ApartmentType, Currency, Gender, HouseRooms, HouseRules, locationAccessibility, MeansOfTransportToMAjorRoad, NearbyPlaces, Religion, RentType, Safety } from 'src/Utils/Types/statics';
-import { Optional } from '@nestjs/common';
+import { HydratedDocument } from 'mongoose';
 
-export type ApartmentListingDocument = ApartmentListing & Document;
-export type SelfListingDocument = SelfListing & Document;
-
+// Import all enums from your existing types file
+import {
+  Religion,
+  ApartmentType,
+  Amenities,
+  Safety,
+  HouseRules,
+  Accessibility,
+  HouseRooms,
+  LocationAccessibility,
+  NearbyPlaces,
+  RentType,
+  MeansOfTransportToMajorRoad,
+  Currency,
+  Gender
+} from '../Utils/Types/statics';
 
 @Schema({ timestamps: true })
 export class ApartmentListing {
-    @Prop({ required: true })
-    @IsNotEmpty()
-    userId: string;
+  @Prop({ required: true, type: String })
+  @IsNotEmpty()
+  userId: string;
 
-    @Prop({ required: false })
-    @IsNotEmpty()
-    @IsOptional()
-    about?: string;
+  @Prop({ required: false, type: String })
+  @IsOptional()
+  @IsString()
+  about?: string;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    rentPrice: number;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  rentPrice: number;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    @IsString()
-    @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
-      message: 'Date must be in the format YYYY-MM',
-    })
-    rentStartDate: string; 
-  
-    @Prop({ required: true })
-    @IsNotEmpty()
-    @IsString()
-    @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
-      message: 'Date must be in the format YYYY-MM',
-    })
-    rentEndDate: string;
+  @Prop({ required: true, type: String })
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
+    message: 'Date must be in the format YYYY-MM',
+  })
+  rentStartDate: string;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    minimumRenterAge: number;
+  @Prop({ required: true, type: String })
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
+    message: 'Date must be in the format YYYY-MM',
+  })
+  rentEndDate: string;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    currency: Currency;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(18)
+  @Max(100)
+  minimumRenterAge: number;
 
-    @Prop({ required: true, enum: ["Prepaid", "Postpaid",] })
-    @IsNotEmpty()
-    @IsEnum(["Prepaid", "Postpaid",], { message: 'Meter type must be either "Prepaid"or "Postpaid"' })
-    electricityMeterType: string;
+  @Prop({ required: true, type: String, enum: Object.values(Currency) })
+  @IsNotEmpty()
+  @IsEnum(Currency)
+  currency: Currency;
 
-    @Prop({ required: true, enum: RentType })
-    @IsNotEmpty()
-    @IsEnum(RentType, { message: 'Rent type must be either "Long" or "HandOver"' })
-    rentType: RentType[];
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: ['Prepaid', 'Postpaid'] 
+  })
+  @IsNotEmpty()
+  @IsEnum(['Prepaid', 'Postpaid'])
+  electricityMeterType: string;
 
-    @Prop({ required: true, enum: ApartmentType })
-    @IsNotEmpty()
-    @IsEnum(ApartmentType, { message: 'Apartment type does not tally, please, retry.' })
-    apartmentType: ApartmentType;
+  @Prop({ 
+    required: true, 
+    type: [String], 
+    enum: Object.values(RentType) 
+  })
+  @IsNotEmpty()
+  @IsEnum(RentType, { each: true })
+  rentType: RentType[];
 
-    @Prop({ required: false, type: [Amenities], enum: Amenities })
-    @Optional()
-    @IsEnum(Amenities, { each: true, message: 'Some amenities are invalid, please check your selections.' })
-    amenities?: Amenities[];
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: Object.values(ApartmentType) 
+  })
+  @IsNotEmpty()
+  @IsEnum(ApartmentType)
+  apartmentType: ApartmentType;
 
-    @Prop({ required: false, type: [Safety], enum: Safety })
-    @Optional()
-    @IsEnum(Safety, { each: true, message: 'Some safety features are invalid, please check your selections.' })
-    safetyFeatures?: Safety[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Amenities) 
+  })
+  @IsOptional()
+  @IsEnum(Amenities, { each: true })
+  amenities?: Amenities[];
 
-    @Prop({ required: false, type: [HouseRules], enum: HouseRules })
-    @Optional()
-    @IsEnum(HouseRules, { each: true, message: 'Some house rules are invalid, please check your selections.' })
-    houseRules?: HouseRules[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Safety) 
+  })
+  @IsOptional()
+  @IsEnum(Safety, { each: true })
+  safetyFeatures?: Safety[];
 
-    @Prop({ required: false, type: [Accessibility], enum: Accessibility })
-    @Optional()
-    @IsEnum(Accessibility, { each: true, message: 'Some accessibility features are invalid, please check your selections.' })
-    accessibilityFeatures?: Accessibility[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(HouseRules) 
+  })
+  @IsOptional()
+  @IsEnum(HouseRules, { each: true })
+  houseRules?: HouseRules[];
 
-    @Prop({ required: false, type: [HouseRooms], enum: HouseRooms })
-    @Optional()
-    @IsEnum(HouseRooms, { each: true, message: 'Some apartment rooms options are invalid, please check your selections.' })
-    otherHouseRooms?: HouseRooms[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Accessibility) 
+  })
+  @IsOptional()
+  @IsEnum(Accessibility, { each: true })
+  accessibilityFeatures?: Accessibility[];
 
-    @Prop({ required: true, type: locationAccessibility })
-    @IsNotEmpty()
-    @IsEnum(locationAccessibility, { each: true, message: 'Some location accessbility options are invalid, please check your selections.' })
-    locationAccessibility: locationAccessibility[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(HouseRooms) 
+  })
+  @IsOptional()
+  @IsEnum(HouseRooms, { each: true })
+  otherHouseRooms?: HouseRooms[];
 
-    @Prop({ required: false, type: NearbyPlaces })
-    @IsOptional()
-    @IsEnum(NearbyPlaces, { each: true, message: 'Invalid place selected.' })
-    nearbyPlaces?: NearbyPlaces[];
+  @Prop({ 
+    required: true, 
+    type: [String], 
+    enum: Object.values(LocationAccessibility) 
+  })
+  @IsNotEmpty()
+  @IsEnum(LocationAccessibility, { each: true })
+  locationAccessibility: LocationAccessibility[];
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    noOfBathrooms: number;
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(NearbyPlaces) 
+  })
+  @IsOptional()
+  @IsEnum(NearbyPlaces, { each: true })
+  nearbyPlaces?: NearbyPlaces[];
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    noOfBedrooms: number;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  noOfBathrooms: number;
 
-    @Prop({ required: false, type: Boolean })
-    @IsOptional()
-    canPayMonthly?: boolean;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  noOfBedrooms: number;
 
-    @Prop({ required: false, type: Boolean })
-    @IsOptional()
-    isRentNegotiable?: boolean;
+  @Prop({ required: false, type: Boolean })
+  @IsOptional()
+  @IsBoolean()
+  canPayMonthly?: boolean;
 
-    @Prop({ required: true, type: String })
-    @IsOptional()
-    timeFromMajorRoadOrPark: string; //20mins, 1hr, 5s
+  @Prop({ required: false, type: Boolean })
+  @IsOptional()
+  @IsBoolean()
+  isRentNegotiable?: boolean;
 
-    @Prop({ required: true, type: MeansOfTransportToMAjorRoad })
-    @IsOptional()
-    meansFromMajorRoadOrPark: MeansOfTransportToMAjorRoad; //20mins, 1hr, 5s
+  @Prop({ required: true, type: String })
+  @IsNotEmpty()
+  @IsString()
+  timeFromMajorRoadOrPark: string;
 
-    @Prop({ required: true, type: Boolean })
-    @IsOptional()
-    landlordResidesWithin: boolean;
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: Object.values(MeansOfTransportToMajorRoad) 
+  })
+  @IsNotEmpty()
+  @IsEnum(MeansOfTransportToMajorRoad)
+  meansFromMajorRoadOrPark: MeansOfTransportToMajorRoad;
 
-    @Prop({ required: false, type: String })
-    @IsOptional()
-    comment?: string;
+  @Prop({ required: true, type: Boolean })
+  @IsNotEmpty()
+  @IsBoolean()
+  landlordResidesWithin: boolean;
 
-    @Prop({ required: false, type: String })
-    @IsOptional()
-    closestLandmark?: string;
+  @Prop({ required: false, type: String })
+  @IsOptional()
+  @IsString()
+  comment?: string;
 
-    @Prop({ required: false, type: Number })
-    @Max(10, { message: "Electricty consistency range cannot be more than 10" })
-    @Min(0, { message: "Electricty consistency range cannot be less than 0" })
-    electricityConsitency: number;
+  @Prop({ required: false, type: String })
+  @IsOptional()
+  @IsString()
+  closestLandmark?: string;
 
-    @Prop({ required: false, type: Number })
-    @Max(10, { message: "Safety consistency range cannot be more than 10" })
-    @Min(0, { message: "Safety consistency range cannot be less than 0" })
-    safetyConsistency: number; //how safe is the environment
+  @Prop({ 
+    required: false, 
+    type: Number, 
+    min: 0, 
+    max: 10 
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  electricityConsistency?: number;
 
-    @Prop({ required: false, type: Number })
-    @Max(10, { message: "Water availability range cannot be more than 10" })
-    @Min(0, { message: "Water availability range cannot be less than 0" })
-    waterAvailabilityConsitency: number;
+  @Prop({ 
+    required: false, 
+    type: Number, 
+    min: 0, 
+    max: 10 
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  safetyConsistency?: number;
+
+  @Prop({ 
+    required: false, 
+    type: Number, 
+    min: 0, 
+    max: 10 
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  waterAvailabilityConsistency?: number;
 }
 
-
-
+@Schema({ timestamps: true })
 export class SelfListing {
-    @Prop({ required: true })
-    @IsNotEmpty()
-    userId: string;
+  @Prop({ required: true, type: String })
+  @IsNotEmpty()
+  userId: string;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    @IsNumber()
-    minRentPrice: number;
-  
-    @Prop({ required: true })
-    @IsNotEmpty()
-    @IsNumber()
-    maxRentPrice: number;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  minRentPrice: number;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    prefferedMoveInDate: Date;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  maxRentPrice: number;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    prefferedGender: Gender;
+  @Prop({ required: true, type: Date })
+  @IsNotEmpty()
+  @IsDate()
+  @Type(() => Date)
+  preferredMoveInDate: Date;
 
-    @Prop({ required: true })
-    @Max(60, { message: "Age cannot be more than 60" })
-    @Min(18, { message: "Age cannot be lower than 18" })
-    @IsNotEmpty()
-    @IsNumber()
-    prefferedAge: number;
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: Object.values(Gender) 
+  })
+  @IsNotEmpty()
+  @IsEnum(Gender)
+  preferredGender: Gender;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    prefferedReligion: Religion[];
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(18)
+  @Max(60)
+  preferredAge: number;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    occupation: string;
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Religion) 
+  })
+  @IsOptional()
+  @IsEnum(Religion, { each: true })
+  preferredReligion?: Religion[];
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    currency: string;
+  @Prop({ required: true, type: String })
+  @IsNotEmpty()
+  @IsString()
+  occupation: string;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    rentStartDate: Date;
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: Object.values(Currency) 
+  })
+  @IsNotEmpty()
+  @IsEnum(Currency)
+  currency: Currency;
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    rentEndDate: Date;
+  @Prop({ required: true, type: Date })
+  @IsNotEmpty()
+  @IsDate()
+  @Type(() => Date)
+  rentStartDate: Date;
 
-    @Prop({ required: true, enum: ["Prepaid", "Postpaid", ] })
-    @IsNotEmpty()
-    @IsEnum(["Prepaid", "Postpaid",], { message: 'Meter type must be either "Prepaid"or "Postpaid"' })
-    electricityMeterType: string;
+  @Prop({ required: true, type: Date })
+  @IsNotEmpty()
+  @IsDate()
+  @Type(() => Date)
+  rentEndDate: Date;
 
-    @Prop({ required: true, enum: ApartmentType })
-    @IsNotEmpty()
-    @IsEnum(ApartmentType, { message: 'Apartment type does not tally, please, retry.' })
-    apartmentType: ApartmentType;
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: ['Prepaid', 'Postpaid'] 
+  })
+  @IsNotEmpty()
+  @IsEnum(['Prepaid', 'Postpaid'])
+  electricityMeterType: string;
 
-    @Prop({ required: false, type: [Amenities], enum: Amenities })
-    @Optional()
-    @IsEnum(Amenities, { each: true, message: 'Some amenities are invalid, please check your selections.' })
-    amenities?: Amenities[];
+  @Prop({ 
+    required: true, 
+    type: String, 
+    enum: Object.values(ApartmentType) 
+  })
+  @IsNotEmpty()
+  @IsEnum(ApartmentType)
+  apartmentType: ApartmentType;
 
-    @Prop({ required: false, type: [Safety], enum: Safety })
-    @Optional()
-    @IsEnum(Safety, { each: true, message: 'Some safety features are invalid, please check your selections.' })
-    safetyFeatures?: Safety[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Amenities) 
+  })
+  @IsOptional()
+  @IsEnum(Amenities, { each: true })
+  amenities?: Amenities[];
 
-    @Prop({ required: false, type: [HouseRules], enum: HouseRules })
-    @Optional()
-    @IsEnum(HouseRules, { each: true, message: 'Some house rules are invalid, please check your selections.' })
-    houseRules?: HouseRules[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Safety) 
+  })
+  @IsOptional()
+  @IsEnum(Safety, { each: true })
+  safetyFeatures?: Safety[];
 
-    @Prop({ required: false, type: [Accessibility], enum: Accessibility })
-    @Optional()
-    @IsEnum(Accessibility, { each: true, message: 'Some accessibility features are invalid, please check your selections.' })
-    accessibilityFeatures?: Accessibility[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(HouseRules) 
+  })
+  @IsOptional()
+  @IsEnum(HouseRules, { each: true })
+  houseRules?: HouseRules[];
 
-    @Prop({ required: false, type: [HouseRooms], enum: HouseRooms })
-    @Optional()
-    @IsEnum(HouseRooms, { each: true, message: 'Some apartment rooms options are invalid, please check your selections.' })
-    otherHouseRooms?: HouseRooms[];
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(Accessibility) 
+  })
+  @IsOptional()
+  @IsEnum(Accessibility, { each: true })
+  accessibilityFeatures?: Accessibility[];
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    noOfBathrooms: number;
+  @Prop({ 
+    required: false, 
+    type: [String], 
+    enum: Object.values(HouseRooms) 
+  })
+  @IsOptional()
+  @IsEnum(HouseRooms, { each: true })
+  otherHouseRooms?: HouseRooms[];
 
-    @Prop({ required: true })
-    @IsNotEmpty()
-    noOfBedrooms: number;
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  noOfBathrooms: number;
+
+  @Prop({ required: true, type: Number })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  noOfBedrooms: number;
 }
 
-
+// Create Mongoose schemas
 export const ApartmentListingSchema = SchemaFactory.createForClass(ApartmentListing);
 export const SelfListingSchema = SchemaFactory.createForClass(SelfListing);
 
+// Mongoose document types
+export type ApartmentListingDocument = HydratedDocument<ApartmentListing>;
+export type SelfListingDocument = HydratedDocument<SelfListing>;

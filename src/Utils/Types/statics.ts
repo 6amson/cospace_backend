@@ -136,7 +136,7 @@ export enum Safety {
     FENCE = 'Fenced and gated'
 }
 
-export enum MeansOfTransportToMAjorRoad {
+export enum MeansOfTransportToMajorRoad {
     BIKE = "Bike",
     CAR = 'Car',
     TREKKING = 'Trekking',
@@ -177,7 +177,7 @@ export enum HouseRooms {
     STORAGE_ROOM = "Storage room"
 }
 
-export enum locationAccessibility {
+export enum LocationAccessibility {
     CAR = 'Car',
     MOTORCYCLE = 'Motorcycle/Bike',
     WALKABLE = 'Walkable',
