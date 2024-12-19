@@ -20,6 +20,12 @@ import { changePasswordDto, UserSigninDto, verifyCodeDto } from 'src/schema/Dto/
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
+    
+    @Get('')
+    getMain() {
+        return 'Guarded';
+    }
+
     @UseGuards(JwtAuthGuard)
     @Get('profile/:userId')
     getUserProfile(@Req() req: RequestWithUser,) {
