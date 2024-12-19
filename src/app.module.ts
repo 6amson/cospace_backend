@@ -2,14 +2,14 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { config } from 'dotenv';
-import { User, UserActivityLog, UserActivityLogSchema, UserComplaint, UserComplaintSchema, UserMatch, UserMatchSchema, UserReview, UserReviewSchema, UserSchema } from './Schema/user.schema';
-import { UserModule } from './User/user.module';
-import { UserController } from './User/user.controller';
-import { MarketplaceController } from './Marketplace/marketplace.controller';
-import { MarketplaceModule } from './Marketplace/marketplace.module';
-import { MarketplaceService } from './Marketplace/marketplace.service';
-import { ApartmentListing, ApartmentListingSchema, SelfListing, SelfListingSchema } from './Schema/listing.schema';
-import { JwtAuthGuard } from './Utils/Guard/user.guard.service';
+import { User, UserActivityLog, UserActivityLogSchema, UserComplaint, UserComplaintSchema, UserMatch, UserMatchSchema, UserReview, UserReviewSchema, UserSchema } from './schema/user.schema';
+import { UserModule } from './user/user.module';
+import { UserController } from './user/user.controller';
+import { MarketplaceController } from './marketplace/marketplace.controller';
+import { MarketplaceModule } from './marketplace/marketplace.module';
+import { MarketplaceService } from './marketplace/marketplace.service';
+import { ApartmentListing, ApartmentListingSchema, SelfListing, SelfListingSchema } from './schema/listing.schema';
+import { JwtAuthGuard } from './utils/guard/user.guard.service';
 
 config();
 
