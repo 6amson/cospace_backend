@@ -12,7 +12,7 @@ import { changePasswordDto, UserSigninDto, verifyCodeDto } from 'src/Schema/Dto/
 import * as jwt from 'jsonwebtoken';
 import { MailGun } from 'src/Utils/Email/Mailgun/mailgun.config';
 import { EmailTypeKey, UserActivityType, UserRegistrationStage, VerificationReason } from 'src/Utils/Types/statics';
-import { UserService } from '../user/user.service';
+import { UserService } from 'src/user/user.service';
 
 
 config();

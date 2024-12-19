@@ -8,7 +8,7 @@ import { User, UserSchema, UserActivityLog, UserActivityLogSchema, UserReview, U
 import { UserModule } from 'src/User/user.module';
 import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
-import { UserService } from '../user/user.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
