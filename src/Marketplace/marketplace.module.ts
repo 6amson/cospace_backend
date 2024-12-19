@@ -2,12 +2,10 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { MarketplaceService } from './marketplace.service';
-import { UserController } from 'src/User/user.controller';
 import { MarketplaceController } from './marketplace.controller';
 import { ApartmentListing, ApartmentListingSchema, SelfListing, SelfListingSchema } from 'src/Schema/listing.schema';
 import { User, UserSchema, UserActivityLog, UserActivityLogSchema, UserReview, UserReviewSchema, UserComplaint, UserComplaintSchema, UserMatchSchema, UserMatch } from 'src/Schema/user.schema';
 import { UserModule } from 'src/User/user.module';
-import { JwtAuthGuard } from 'src/Utils/Guard/user.guard.service';
 import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
 import { UserService } from 'src/user/user.service';

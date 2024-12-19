@@ -5,11 +5,8 @@ import { ApartmentListing, ApartmentListingSchema, SelfListing, SelfListingSchem
 import { User, UserSchema, UserActivityLog, UserActivityLogSchema, UserReview, UserReviewSchema, UserComplaint, UserComplaintSchema, UserMatchSchema, UserMatch } from 'src/Schema/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from 'src/Utils/Guard/user.guard.service';
 import { MarketplaceModule } from 'src/Marketplace/marketplace.module';
 import { MarketplaceService } from 'src/Marketplace/marketplace.service';
-import { OAuth2Client } from 'google-auth-library';
-import Mailgun from 'mailgun.js';
 import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 
