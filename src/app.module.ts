@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { config } from 'dotenv';
 import { User, UserActivityLog, UserActivityLogSchema, UserComplaint, UserComplaintSchema, UserMatch, UserMatchSchema, UserReview, UserReviewSchema, UserSchema } from './Schema/user.schema';
 import { UserModule } from './User/user.module';
-import { UserService } from './user/user.service';
 import { UserController } from './User/user.controller';
 import { MarketplaceController } from './Marketplace/marketplace.controller';
 import { MarketplaceModule } from './Marketplace/marketplace.module';
